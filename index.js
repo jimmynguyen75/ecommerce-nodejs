@@ -36,7 +36,7 @@ app.get("/", async (req, res) => {
   await sql.connect(sqlConfig);
   const query = `select * from IU.dbo.Product;`;
   const result = await sql.query(query);
-  res.json(result);
+  res.json(result?.recordset);
 });
 
 app.get("/products/:id", async (req, res) => {
@@ -44,7 +44,7 @@ app.get("/products/:id", async (req, res) => {
   await sql.connect(sqlConfig);
   const query = `select * from IU.dbo.Product WHERE ID = ${id};`;
   const result = await sql.query(query);
-  res.json(result);
+  res.json(result?.recordset);
 });
 
 app.get("/search", async (req, res) => {
@@ -52,7 +52,7 @@ app.get("/search", async (req, res) => {
   await sql.connect(sqlConfig);
   const query = `select * from IU.dbo.Product p WHERE ProductName LIKE '%${search}%';`;
   const result = await sql.query(query);
-  res.json(result);
+  res.json(result?.recordset); 
 });
 
-app.listen(5000);
+app.listen(8000);
