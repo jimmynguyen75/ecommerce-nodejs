@@ -1,4 +1,5 @@
 const sql = require("mssql");
+const cors = require("cors");
 require("dotenv").config();
 const app = require("express")();
 
@@ -32,14 +33,17 @@ const connDB = async () => {
 
 connDB();
 
-app.get("/", async (req, res) => {
+app.use(cors({
+  origin:"*"
+}))
+app.get("/api/products", async (req, res) => {
   await sql.connect(sqlConfig);
   const query = `select * from IU.dbo.Product;`;
   const result = await sql.query(query);
   res.json(result?.recordset);
 });
 
-app.get("/products/:id", async (req, res) => {
+app.get("/api/products/:id", async (req, res) => {
   const id = req.params.id;
   await sql.connect(sqlConfig);
   const query = `select * from IU.dbo.Product WHERE ID = ${id};`;
@@ -47,7 +51,7 @@ app.get("/products/:id", async (req, res) => {
   res.json(result?.recordset);
 });
 
-app.get("/search", async (req, res) => {
+app.get("/api/search", async (req, res) => {
   const search = req.query.q;
   await sql.connect(sqlConfig);
   const query = `select * from IU.dbo.Product p WHERE ProductName LIKE '%${search}%';`;
