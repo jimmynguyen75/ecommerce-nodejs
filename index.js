@@ -57,7 +57,7 @@ app.get("/api/products/:id",middleware, async (req, res) => {
   res.json(result?.recordset);
 });
 
-app.get("/api/products/search", middleware,async (req, res) => {
+app.get("/api/product/search", middleware,async (req, res) => {
   const search = req.query.q;
   await sql.connect(sqlConfig);
   const query = `select * from IU.dbo.Product p WHERE ProductName LIKE '%${search}%';`;
