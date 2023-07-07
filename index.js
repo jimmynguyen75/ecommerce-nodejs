@@ -36,14 +36,20 @@ connDB();
 app.use(cors({
   origin:"*"
 }))
-app.get("/api/products", async (req, res) => {
+
+const middleware =(req,res,next)=>{
+  console.log(`[${new Date().toLocaleTimeString()}] | ${req.method} | ${req.originalUrl}`)
+  next();
+}
+app.get("/api/products", middleware,async (req, res) => {
   await sql.connect(sqlConfig);
   const query = `select * from IU.dbo.Product;`;
   const result = await sql.query(query);
+  // console.log("GET products: ", result)
   res.json(result?.recordset);
 });
 
-app.get("/api/products/:id", async (req, res) => {
+app.get("/api/products/:id",middleware, async (req, res) => {
   const id = req.params.id;
   await sql.connect(sqlConfig);
   const query = `select * from IU.dbo.Product WHERE ID = ${id};`;
@@ -51,7 +57,7 @@ app.get("/api/products/:id", async (req, res) => {
   res.json(result?.recordset);
 });
 
-app.get("/api/search", async (req, res) => {
+app.get("/api/products/search", middleware,async (req, res) => {
   const search = req.query.q;
   await sql.connect(sqlConfig);
   const query = `select * from IU.dbo.Product p WHERE ProductName LIKE '%${search}%';`;
