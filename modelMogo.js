@@ -4,6 +4,8 @@ const { connection, connectionIU } = require("./connMogo.js");
 const requestSchema = mongoose.Schema({
   email: String,
   name: String,
+}, {
+  bufferCommands: false,
 });
 
 const reviewSchema = new mongoose.Schema({
@@ -19,11 +21,13 @@ const reviewSchema = new mongoose.Schema({
   size: Number,
   age: String,
   review_date: String,
+}, {
+  bufferCommands: false,
 })
 // const IUDB = mongoose.connection.useDb("iu_csdldn")
 // const NormalDB = mongoose.connection.useDb("nodejs")
-const Request = connection.model("requests", requestSchema);
-const Review = connectionIU.model("review_rating", reviewSchema);
+const Request =  connection.model("requests", requestSchema);
+const Review  =  connectionIU.model("review_rating", reviewSchema);
 
 
 module.exports = {
