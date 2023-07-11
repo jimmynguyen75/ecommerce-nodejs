@@ -1,4 +1,6 @@
+require("dotenv").config()
 const sql = require("mssql");
+
 
 const sqlConfig = {
     user: process.env.DB_USER,
@@ -15,8 +17,9 @@ const sqlConfig = {
       trustServerCertificate: false, // change to true for local dev / self-signed certs
     },
   };
-
+let client;
 const connectSQL = async () => {
-    await sql.connect(sqlConfig);
+  client = await sql.connect(sqlConfig);
+  return client
 }
-module.exports = connectSQL;
+module.exports.connectSQL = connectSQL;

@@ -1,42 +1,37 @@
-const sql = require("mssql");
 const cors = require("cors");
 const { Review } = require("./modelMogo.js");
-const connectSQL = require("./connSQL.js");
+const { connectSQL } = require("./connSQL.js");
 require("dotenv").config();
-
 const app = require("express")();
 
+let clientSQL;
 app.use(
   cors({
     origin: "*",
   })
 );
-
 const middleware = (req, res, next) => {
   console.log(`[${new Date().toLocaleTimeString()}] | ${req.method} | ${req.originalUrl}`);
   next();
 };
 //CALL SQL SERVER
 app.get("/api/products", middleware, async (req, res) => {
-  connectSQL();
   const query = `select * from IU.dbo.Product;`;
-  const result = await sql.query(query);
+  const result = await clientSQL.query(query);
   res.json(result?.recordset);
 });
 
 app.get("/api/products/:id", middleware, async (req, res) => {
   const id = req.params.id;
-  connectSQL();
   const query = `select * from IU.dbo.Product WHERE ID = ${id};`;
-  const result = await sql.query(query);
+  const result = await clientSQL.query(query);
   res.json(result?.recordset);
 });
 
 app.get("/api/product/search", middleware, async (req, res) => {
   const search = req.query.q;
-  connectSQL();
   const query = `select * from IU.dbo.Product p WHERE ProductName LIKE '%${search}%';`;
-  const result = await sql.query(query);
+  const result = await clientSQL.query(query);
   res.json(result?.recordset);
 });
 
@@ -66,4 +61,7 @@ app.get("/api/categories/:category", middleware, async (req, res) => {
   const review = await Review.find({ category: category });
   res.json(review);
 });
-app.listen(8000);
+
+app.listen(8000, async () => {
+  clientSQL = await connectSQL();
+});
