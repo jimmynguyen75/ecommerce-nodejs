@@ -1,5 +1,5 @@
 const cors = require("cors");
-const { Review } = require("./modelMogo.js");
+const { Review, Clothing } = require("./modelMogo.js");
 const { connectSQL } = require("./connSQL.js");
 require("dotenv").config();
 const app = require("express")();
@@ -35,6 +35,13 @@ app.get("/api/product/search", middleware, async (req, res) => {
   res.json(result?.recordset);
 });
 
+app.get("/api/productid/search", middleware, async (req, res) => {
+  const search = req.query.q;
+  const query = `select * from IU.dbo.Product p WHERE ProductID LIKE '%${search}%';`;
+  const result = await clientSQL.query(query);
+  res.json(result?.recordset);
+});
+
 //------------------------------------------
 //CALL MONGODB SERVER
 app.get("/api/review", middleware, async (req, res) => {
@@ -61,7 +68,13 @@ app.get("/api/categories/:category", middleware, async (req, res) => {
   const review = await Review.find({ category: category });
   res.json(review);
 });
-
+//CLOTHING
+app.get("/api/clothing/users/:id", middleware, async (req, res) => {
+  const id = req.params.id;
+  const query = { $regex: id }
+  const review = await Clothing.find({$or:[{user_id:query},{user_name:query}]});
+  res.json(review);
+});
 app.listen(8000, async () => {
   clientSQL = await connectSQL();
 });
